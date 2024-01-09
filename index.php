@@ -36,6 +36,18 @@ $hotels = [
         'distance_to_center' => 50
     ],
 ];
+
+// Verifica se la checkbox è stata selezionata
+$filterParking = isset($_GET['filter_parking']) && $_GET['filter_parking'] === 'on';
+
+
+// Filtraggio degli hotel in base al form
+$filteredHotels = $hotels;
+if (isset($_GET['filter_parking']) && $_GET['filter_parking'] === 'on') {
+    $filteredHotels = array_filter($hotels, function ($hotel) {
+        return $hotel['parking'];
+    });
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,6 +67,17 @@ $hotels = [
 <body>
 
     <main class="container">
+        <form method="GET" class="w-100 row g-3 mb-3" id="ms_form">
+            <div class="col-5 mt-0 d-flex align-items-center">
+                <div class="form-check">
+                    <input class="form-check-input ms_button" type="checkbox" name="filter_parking" <?php echo $filterParking ? 'checked' : ''; ?>>
+                    <label class="form-check-label ms_label">Mostra solo hotel con parcheggio</label>
+                </div>
+            </div>
+            <div class="col-1 mt-0">
+                <button type="submit" class="btn ms_button">Filtra</button>
+            </div>
+        </form>
         <table class="table" id="ms_table">
             <thead>
                 <tr>
@@ -69,7 +92,7 @@ $hotels = [
             <tbody>
                 <?php
                 // Ciclo esterno per attraversare gli hotel
-                foreach ($hotels as $hotel) {
+                foreach ($filteredHotels as $hotel) {
                     echo "<tr>";
                     // Ciclo interno per attraversare le informazioni di ciascun hotel
                     foreach ($hotel as $value) {
